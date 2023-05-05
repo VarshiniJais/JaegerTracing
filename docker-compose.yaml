@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.26
+    ports:
+      - "16686:16686"
+      - "9411:9411"
+
+  admin:
+    build: 
+      context: ./admin
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: postgres
+      JAEGER_AGENT_HOST: jaeger
+      JAEGER_AGENT_PORT: 6831
+      JAEGER_SERVICE_NAME: admin
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+      - jaeger
+    
+  user:
+    build: 
+      context: ./user
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: postgres
+      JAEGER_AGENT_HOST: jaeger
+      JAEGER_AGENT_PORT: 6831
+      JAEGER_SERVICE_NAME: user
+    ports:
+      - "5001:5000"
+    depends_on:
+      - db
+      - jaeger
