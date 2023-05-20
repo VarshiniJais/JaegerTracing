@@ -2,6 +2,72 @@
 <html>
   <head>
     <title>Add Product</title>
+    <style>
+      body {
+        background-color: #f5f5f5;
+        font-family: Arial, sans-serif;
+      }
+      
+      h1 {
+        text-align: center;
+        color: #333;
+        font-size: 24px;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+      }
+      
+      form {
+        width: 300px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        animation: form-fade-in 0.5s ease-in-out;
+      }
+      
+      label {
+        display: block;
+        margin-bottom: 10px;
+        color: #555;
+        font-size: 14px;
+        font-weight: bold;
+      }
+      
+      input[type="number"],
+      input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      
+      input[type="submit"] {
+        background-color: #4CAF50;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+      }
+      
+      input[type="submit"]:hover {
+        background-color: #45a049;
+      }
+      
+      @keyframes form-fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
   </head>
   <body>
     <h1>Add Product</h1>
