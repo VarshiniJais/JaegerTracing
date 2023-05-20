@@ -19,7 +19,7 @@ services:
       - "9411:9411"
 
   admin:
-    build: 
+    build:
       context: ./admin
     environment:
       DB_HOST: db
@@ -35,9 +35,9 @@ services:
     depends_on:
       - db
       - jaeger
-    
+
   user:
-    build: 
+    build:
       context: ./user
     environment:
       DB_HOST: db
@@ -52,4 +52,16 @@ services:
       - "5001:5000"
     depends_on:
       - db
+      - jaeger
+
+  login:
+    build:
+      context: ./login
+    environment:
+      JAEGER_AGENT_HOST: jaeger
+      JAEGER_AGENT_PORT: 6831
+      JAEGER_SERVICE_NAME: user
+    ports:
+      - "5002:5000"
+    depends_on:
       - jaeger
