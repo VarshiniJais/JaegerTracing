@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, redirect, render_template,abort
 import os
 import opentracing
 import jaeger_client
@@ -37,8 +37,9 @@ def login():
                 return redirect('http://localhost:5000/')
             else:
                 span.set_tag('authenticated', False)
-                return 'Invalid username or password'
-
+                span.log_kv({'event': 'error', 'message': 'Invalid username or password'})
+                abort(401, 'Invalid username or password')  # Throw HTTP 401 Unauthorized error
+        
         return render_template('login.html')
 
 if __name__ == '__main__':
