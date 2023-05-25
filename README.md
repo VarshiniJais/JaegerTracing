@@ -6,3 +6,5 @@ The Admin service provides an API for adding products to a PostgreSQL database.T
 
 # User Service
 The User service provides an API for viewing and liking products stored in a PostgreSQL database. 
+
+# Login Service
