@@ -57,12 +57,70 @@ def add_product():
         span.set_tag('product_id', product['id'])
         cur = conn.cursor()
         cur.execute('''
+        SELECT id FROM products WHERE id = %s;
+        ''', (product['id'],))
+        existing_product = cur.fetchone()
+        if existing_product:
+            # Product with the same primary key already exists
+            span.log_kv({'event': 'error', 'message': 'Product already exists'})
+            return 'Product already exists', 409
+        cur.execute('''
         INSERT INTO products (id, name, like_count)
         VALUES (%s, %s, %s);
         ''', (product['id'], product['name'], product['like_count']))
         conn.commit()
     # Return
     return 'Product added successfully'
+
+@app.route('/update_product', methods=['POST'])
+def update_product():
+    # Extract product data from request
+    product = {
+        'id': int(request.form['id']),
+        'name': request.form['name'],
+        'like_count': int(request.form['like_count']),
+    }
+    # Update product in database
+    with jaeger_tracer.start_span('update_product') as span:
+        span.set_tag('product_id', product['id'])
+        cur = conn.cursor()
+        cur.execute('''
+        SELECT id FROM products WHERE id = %s;
+        ''', (product['id'],))
+        existing_product = cur.fetchone()
+        if not existing_product:
+            # Product does not exist
+            span.log_kv({'event': 'error', 'message': 'Product does not exist'})
+            raise Exception('Product does not exist')
+        cur.execute('''
+        UPDATE products SET name = %s, like_count = %s WHERE id = %s;
+        ''', (product['name'], product['like_count'], product['id']))
+        conn.commit()
+    # Return
+    return 'Product updated successfully'
+
+@app.route('/delete_product', methods=['POST'])
+def delete_product():
+    # Extract product ID from request
+    product_id = int(request.form['id'])
+    # Delete product from database
+    with jaeger_tracer.start_span('delete_product') as span:
+        span.set_tag('product_id', product_id)
+        cur = conn.cursor()
+        cur.execute('''
+        SELECT id FROM products WHERE id = %s;
+        ''', (product_id,))
+        existing_product = cur.fetchone()
+        if not existing_product:
+            # Product does not exist
+            span.log_kv({'event': 'error', 'message': 'Product does not exist'})
+            raise Exception('Product does not exist')
+        cur.execute('''
+        DELETE FROM products WHERE id = %s;
+        ''', (product_id,))
+        conn.commit()
+    # Return
+    return 'Product deleted successfully'
 
 @app.before_request
 def before_request():

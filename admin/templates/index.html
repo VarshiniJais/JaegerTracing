@@ -1,76 +1,88 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Add Product</title>
-    <style>
-      body {
-        background-color: #f5f5f5;
-        font-family: Arial, sans-serif;
+
+<head>
+  <title>Add, Update, and Delete Products</title>
+  <style>
+    body {
+      background-color: #f5f5f5;
+      font-family: Arial, sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      font-size: 24px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .form-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    form {
+      flex: 1;
+      background-color: #fff;
+      padding: 40px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      color: #555;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    input[type="submit"] {
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    @keyframes form-fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
       }
-      
-      h1 {
-        text-align: center;
-        color: #333;
-        font-size: 24px;
-        text-transform: uppercase;
-        margin-bottom: 20px;
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
-      
-      form {
-        width: 300px;
-        margin: 0 auto;
-        background-color: #fff;
-        padding: 20px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        animation: form-fade-in 0.5s ease-in-out;
-      }
-      
-      label {
-        display: block;
-        margin-bottom: 10px;
-        color: #555;
-        font-size: 14px;
-        font-weight: bold;
-      }
-      
-      input[type="number"],
-      input[type="text"] {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 14px;
-      }
-      
-      input[type="submit"] {
-        background-color: #4CAF50;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 3px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background-color 0.3s ease;
-      }
-      
-      input[type="submit"]:hover {
-        background-color: #45a049;
-      }
-      
-      @keyframes form-fade-in {
-        from {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Add Product</h1>
+    }
+  </style>
+  <script>
+    // Add JavaScript effects or interactivity here if needed
+  </script>
+</head>
+
+<body>
+  <h1>Add, Update, and Delete Products</h1>
+  <div class="form-container">
     <form method="POST" action="/add_product">
       <label for="id">ID:</label>
       <input type="number" name="id" id="id" required>
@@ -81,7 +93,32 @@
       <label for="like_count">Like Count:</label>
       <input type="number" name="like_count" id="like_count" required>
       <br>
+      <br>
       <input type="submit" value="Add Product">
     </form>
-  </body>
+
+    <form method="POST" action="/update_product">
+      <label for="update_id">ID of Product to Update:</label>
+      <input type="number" name="id" id="update_id" required>
+      <br>
+      <label for="update_name">New Name:</label>
+      <input type="text" name="name" id="update_name" required>
+      <br>
+      <label for="update_like_count">New Like Count:</label>
+      <input type="number" name="like_count" id="update_like_count" required>
+      <br>
+      <br>
+      <input type="submit" value="Update Product">
+    </form>
+
+    <form method="POST" action="/delete_product">
+      <label for="delete_id">ID of Product to Delete:</label>
+      <input type="number" name="id" id="delete_id" required>
+      <br>
+      <br>
+      <input type="submit" value="Delete Product">
+    </form>
+  </div>
+</body>
+
 </html>
