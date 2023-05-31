@@ -18,6 +18,11 @@ services:
       - "16686:16686"
       - "9411:9411"
 
+  redis:
+    image: redis:6
+    ports:
+      - "6379:6379"
+
   admin:
     build:
       context: ./admin
@@ -27,6 +32,8 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_NAME: postgres
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       JAEGER_AGENT_HOST: jaeger
       JAEGER_AGENT_PORT: 6831
       JAEGER_SERVICE_NAME: admin
@@ -34,6 +41,7 @@ services:
       - "5000:5000"
     depends_on:
       - db
+      - redis
       - jaeger
 
   user:
@@ -45,6 +53,8 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_NAME: postgres
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       JAEGER_AGENT_HOST: jaeger
       JAEGER_AGENT_PORT: 6831
       JAEGER_SERVICE_NAME: user
@@ -52,6 +62,7 @@ services:
       - "5001:5000"
     depends_on:
       - db
+      - redis
       - jaeger
 
   login:

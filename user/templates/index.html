@@ -80,5 +80,10 @@
         {% endfor %}
       </tbody>
     </table>
+    <form action="/send_message" method="post">
+      <label for="message">Message:</label>
+      <input type="text" id="message" name="message">
+      <button type="submit">Send Message</button>
+  </form>
   </body>
 </html>

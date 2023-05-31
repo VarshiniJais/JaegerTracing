@@ -119,6 +119,11 @@
       <input type="submit" value="Delete Product">
     </form>
   </div>
+  <ul>
+    {% for message in messages %}
+        <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
 </body>
 
 </html>

@@ -3,6 +3,10 @@ import psycopg2
 import os
 import opentracing
 from jaeger_client import Config
+import redis
+from opentracing.propagation import Format
+import requests
+
 
 app = Flask(__name__)
 
@@ -14,6 +18,11 @@ conn = psycopg2.connect(
     password=os.environ.get('DB_PASSWORD', ''),
     database=os.environ.get('DB_NAME', 'postgres'),
 )
+
+# Initialize Redis connection
+redis_host = os.environ.get('REDIS_HOST', 'localhost')
+redis_port = os.environ.get('REDIS_PORT', '6379')
+redis_client = redis.Redis(host=redis_host, port=redis_port)
 
 # Initialize Jaeger tracer
 config = Config(
@@ -42,7 +51,40 @@ conn.commit()
 # Define Flask routes
 @app.route('/')
 def index():
-    return render_template('index.html')
+    with jaeger_tracer.start_active_span('index') as scope:
+        span = scope.span
+        # Get messages from the message queue
+        messages = redis_client.lrange('messages', 0, -1)
+        messages = [message.decode() for message in messages]
+        span.log_kv({'event': 'fetch messages'})
+        return render_template('index.html', messages=messages)
+
+@app.route('/approve_message', methods=['POST'])
+def approve_message():
+    with jaeger_tracer.start_active_span('approve_message') as scope:
+        span = scope.span
+        # Extract message data from request
+        message = request.form['message']
+        span.log_kv({'event': 'extract message', 'message': message})
+        approved_message = f"APPROVED: {message}"
+        span.log_kv({'event': 'approve message', 'approved_message': approved_message})
+        # Store the approved message in the message queue
+        redis_client.rpush('approved_messages', approved_message)
+        span.log_kv({'event': 'store approved message'})
+
+        headers = {}
+        opentracing.tracer.inject(
+            span_context=span.context,
+            format=Format.HTTP_HEADERS,
+            carrier=headers,
+        )
+
+        # Make a request back to the user service
+        user_response = requests.post('http://user:5000/message_approved', data={'approved_message': approved_message}, headers=headers)
+        span.log_kv({'event': 'request to user'})
+
+        # Return
+        return 'Message Receieved successfully'
 
 @app.route('/add_product', methods=['POST'])
 def add_product():
